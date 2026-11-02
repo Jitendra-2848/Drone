@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
@@ -9,11 +9,29 @@ import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
 const Page2 = () => {
     const Box = useRef<HTMLCanvasElement | null>(null);
+    const [loadProgress, setLoadProgress] = useState(0);
+    const [loadError, setLoadError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const canvas = Box.current;
         const container = canvas?.parentElement;
         if (!canvas || !container) return;
+        let disposed = false;
+
+        const loadingManager = new THREE.LoadingManager();
+        loadingManager.onProgress = (_url, loaded, total) => {
+            if (!disposed) setLoadProgress(Math.round((loaded / total) * 100));
+        };
+        loadingManager.onLoad = () => {
+            if (disposed) return;
+            setLoadProgress(100);
+            setIsLoading(false);
+        };
+        loadingManager.onError = (url) => {
+            console.error(`Failed to load model asset: ${url}`);
+            if (!disposed) setLoadError("Some model assets failed to load.");
+        };
 
         const gui = new GUI({
             title: "Settings",
@@ -48,7 +66,7 @@ const Page2 = () => {
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(Data.color);
 
-        const textureLoader = new THREE.TextureLoader();
+        const textureLoader = new THREE.TextureLoader(loadingManager);
         const texturePath = "/lieutenantHead/Assets/Models/PBR/lieutenantHead/Textures";
         const headTexture = textureLoader.load(
             `${texturePath}/Lieutenant_head_diffuse.jpg`,
@@ -73,10 +91,11 @@ const Page2 = () => {
             texture.colorSpace = THREE.SRGBColorSpace;
         });
 
-        const model = new GLTFLoader();
+        const model = new GLTFLoader(loadingManager);
         model.load(
             "/lieutenantHead/lieutenantHead.gltf",
             (gltf) => {
+                if (disposed) return;
                 const cube = gltf.scene;
                 const modelMaterials = new Set<THREE.MeshStandardMaterial>();
 
@@ -173,6 +192,7 @@ const Page2 = () => {
             undefined,
             (error) => {
                 console.error("Failed to load the Lieutenant head model:", error);
+                if (!disposed) setLoadError("The Lieutenant model failed to load.");
             }
         );
 
@@ -198,12 +218,12 @@ const Page2 = () => {
         // Renderer
         const renderer = new THREE.WebGLRenderer({
             canvas,
-            antialias: true
+            antialias: window.devicePixelRatio <= 1.5
         });
 
         renderer.setSize(size.width, size.height, false);
         renderer.setPixelRatio(
-            Math.min(window.devicePixelRatio, 2)
+            Math.min(window.devicePixelRatio, 1.5)
         );
 
         // Orbit Controls
@@ -228,37 +248,97 @@ const Page2 = () => {
         // GUI Folders
 
 
-        // Animation
-        let animationId: number;
+        let animationId: number | null = null;
+        let isInViewport = false;
 
         function animate() {
-            animationId = requestAnimationFrame(animate);
+            if (!isInViewport || document.hidden) {
+                animationId = null;
+                return;
+            }
 
             controls.update();
             renderer.render(scene, camera);
+            animationId = requestAnimationFrame(animate);
         }
 
-        animate();
+        const visibilityObserver = new IntersectionObserver(([entry]) => {
+            isInViewport = entry.isIntersecting;
+            if (isInViewport && animationId === null && !document.hidden) {
+                animationId = requestAnimationFrame(animate);
+            } else if (!isInViewport && animationId !== null) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+        });
+        visibilityObserver.observe(container);
+
+        const handleVisibilityChange = () => {
+            if (document.hidden && animationId !== null) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            } else if (!document.hidden && isInViewport && animationId === null) {
+                animationId = requestAnimationFrame(animate);
+            }
+        };
+        document.addEventListener("visibilitychange", handleVisibilityChange);
 
         // Cleanup
         return () => {
-            cancelAnimationFrame(animationId);
+            disposed = true;
+            if (animationId !== null) cancelAnimationFrame(animationId);
 
             controls.dispose();
             resizeObserver.disconnect();
+            visibilityObserver.disconnect();
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
             gui.destroy();
 
+            headTexture.dispose();
+            bodyTexture.dispose();
+            jacketTexture.dispose();
             renderer.dispose();
         };
 
     }, []);
 
     return (
-        <div className="h-full w-full">
+        <div className="relative h-full w-full">
             <canvas
                 ref={Box}
                 className="w-full h-full block"
             />
+            {isLoading && !loadError && (
+                <div
+                    aria-live="polite"
+                    className="pointer-events-none absolute inset-0 z-5 flex items-center justify-center bg-slate-950/80 p-6 text-center text-sm text-slate-200"
+                >
+                    <div className="w-full max-w-xs">
+                        <p>Loading Lieutenant model... {loadProgress}%</p>
+                        <div
+                            className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-700"
+                            role="progressbar"
+                            aria-label="Lieutenant model loading progress"
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            aria-valuenow={loadProgress}
+                        >
+                            <div
+                                className="h-full rounded-full bg-cyan-400 transition-[width]"
+                                style={{ width: `${loadProgress}%` }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
+            {loadError && (
+                <div
+                    aria-live="assertive"
+                    className="pointer-events-none absolute inset-0 z-5 flex items-center justify-center bg-slate-950/90 p-6 text-center text-sm text-red-200"
+                >
+                    {loadError}
+                </div>
+            )}
         </div>
     );
 };
