@@ -1,25 +1,35 @@
 
-"use client";
+// "use client";
 
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
+import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
 const Page = () => {
     const Box = useRef<HTMLCanvasElement | null>(null);
 
     useEffect(() => {
         const canvas = Box.current;
-        if (!canvas) return;
+        const container = canvas?.parentElement;
+        if (!canvas || !container) return;
 
         const gui = new GUI({
             title: "Settings",
-            autoPlace: true
+            container
         });
+        gui.domElement.classList.add(
+            "absolute",
+            "right-3",
+            "top-3",
+            "z-10",
+            "max-h-[85%]",
+            "overflow-y-auto"
+        );
 
         const Data = {
-            color: "#ffffff"
+            color: "#fff"
         };
 
         const Material = {
@@ -30,58 +40,172 @@ const Page = () => {
         };
 
         const size = {
-            width: canvas.clientWidth || window.innerWidth,
-            height: canvas.clientHeight || window.innerHeight
+            width: container.clientWidth || window.innerWidth,
+            height: container.clientHeight || window.innerHeight
         };
 
         // Scene
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(Data.color);
 
-        // Geometry
-        const geometry = new THREE.BoxGeometry(1, 2, 3,128, 128, 128);
-
-        // Texture Loader
         const textureLoader = new THREE.TextureLoader();
+        const texturePath = "/adamHead/Assets/Models/PBR/Adam/Textures";
+        const headTexture = textureLoader.load(
+            `${texturePath}/Adam_Head_a.jpg`,
+            undefined,
+            undefined,
+            (error) => console.error("Failed to load the Adam head texture:", error)
+        );
+        const torsoTexture = textureLoader.load(
+            `${texturePath}/Adam_Torso_a.jpg`,
+            undefined,
+            undefined,
+            (error) => console.error("Failed to load the Adam torso texture:", error)
+        );
+        const maskTexture = textureLoader.load(
+            `${texturePath}/Mask/Adam_mask_intact_a.jpg`,
+            undefined,
+            undefined,
+            (error) => console.error("Failed to load the Adam mask texture:", error)
+        );
 
-        const texture = textureLoader.load(
-            "/1.jpg",
-            () => {
-                console.log("Texture Loaded");
+        [headTexture, torsoTexture, maskTexture].forEach((texture) => {
+            texture.colorSpace = THREE.SRGBColorSpace;
+        });
+
+        const model = new GLTFLoader();
+        model.load(
+            "/adamHead/adamHead.gltf",
+            (gltf) => {
+                const cube = gltf.scene;
+                const modelMaterials = new Set<THREE.MeshStandardMaterial>();
+
+                cube.traverse((child) => {
+
+                    if (child instanceof THREE.Mesh) {
+
+                        const materials = Array.isArray(child.material)
+                            ? child.material
+                            : [child.material];
+
+                        materials.forEach((mat) => {
+
+                            if (mat instanceof THREE.MeshStandardMaterial) {
+
+                                mat.roughness = 0.7;
+                                mat.metalness = 0;
+
+                            }
+
+                        });
+
+                    }
+
+                });
+
+                // scene.add(cube);
+
+
+                cube.traverse((object) => {
+                    if (object instanceof THREE.Mesh) {
+                        const meshMaterials = Array.isArray(object.material)
+                            ? object.material
+                            : [object.material];
+
+                        meshMaterials.forEach((meshMaterial) => {
+                            if (meshMaterial instanceof THREE.MeshStandardMaterial) {
+                                const materialName = meshMaterial.name.toLowerCase();
+                                if (materialName.includes("head")) {
+                                    meshMaterial.map = headTexture;
+                                } else if (materialName.includes("torso")) {
+                                    meshMaterial.map = torsoTexture;
+                                } else if (materialName.includes("mask")) {
+                                    meshMaterial.map = maskTexture;
+                                }
+                                meshMaterial.needsUpdate = true;
+                                modelMaterials.add(meshMaterial);
+                            }
+                        });
+                    }
+                });
+
+                const positionFolder = gui.addFolder("Position");
+                const MCFolder = gui.addFolder("Material and Color");
+                const lightFolder = gui.addFolder("Lighting");
+                // Position Controls
+                positionFolder
+                    .add(cube.position, "x")
+                    .min(-3).max(3).step(0.1).name("X");
+
+                positionFolder
+                    .add(cube.position, "y")
+                    .min(-3).max(3).step(0.1).name("Y");
+
+                positionFolder
+                    .add(cube.position, "z")
+                    .min(-3).max(3).step(0.1).name("Z");
+
+                positionFolder.add(cube, "visible").name("Visibility");
+
+                // Material Controls
+                MCFolder.add(Material, "wireframe")
+                    .name("Wireframe")
+                    .onChange((value: boolean) => {
+                        modelMaterials.forEach((meshMaterial) => {
+                            meshMaterial.wireframe = value;
+                        });
+                    });
+
+                MCFolder.add(Material, "roughness", 0, 1, 0.01)
+                    .name("Roughness")
+                    .onChange((value: number) => {
+                        modelMaterials.forEach((meshMaterial) => {
+                            meshMaterial.roughness = value;
+                        });
+                    });
+
+                MCFolder.add(Material, "metalness", 0, 1, 0.01)
+                    .name("Metalness")
+                    .onChange((value: number) => {
+                        modelMaterials.forEach((meshMaterial) => {
+                            meshMaterial.metalness = value;
+                        });
+                    });
+
+                MCFolder.addColor(Data, "color")
+                    .name("Background Color")
+                    .onChange((value: string) => {
+                        scene.background = new THREE.Color(value);
+                    });
+
+                MCFolder.addColor(Material, "color")
+                    .name("Material Color")
+                    .onChange((value: string) => {
+                        modelMaterials.forEach((meshMaterial) => {
+                            meshMaterial.color.set(value);
+                        });
+                    });
+
+                // Lighting Controls
+                lightFolder
+                    .add(ambientLight, "intensity")
+                    .min(0).max(5).step(0.1)
+                    .name("Ambient Light");
+
+                scene.add(cube);
             },
             undefined,
             (error) => {
-                console.log("Error loading texture:", error);
+                console.error("Failed to load the Adam head model:", error);
             }
         );
 
-        texture.colorSpace = THREE.SRGBColorSpace;
-
-        // Material
-        const material = new THREE.MeshStandardMaterial({
-            map: texture,
-            color: Material.color,
-            displacementMap: texture,
-            displacementScale: 0.1,
-            roughness: Material.roughness,
-            metalness: Material.metalness,
-            wireframe: Material.wireframe
-        });
-
-        // Cube
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
-
         // Lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 2);
 
-        const directionalLight = new THREE.DirectionalLight(
-            0xffffff,
-            3
-        );
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 4);
 
-        directionalLight.position.set(2, 4, 5);
-
+        directionalLight.position.set(3, 5, 5);
         scene.add(ambientLight, directionalLight);
 
         // Camera
@@ -101,7 +225,7 @@ const Page = () => {
             antialias: true
         });
 
-        renderer.setSize(size.width, size.height);
+        renderer.setSize(size.width, size.height, false);
         renderer.setPixelRatio(
             Math.min(window.devicePixelRatio, 2)
         );
@@ -114,63 +238,19 @@ const Page = () => {
 
         controls.enableDamping = true;
 
+        const resizeObserver = new ResizeObserver(() => {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            if (!width || !height) return;
+
+            renderer.setSize(width, height, false);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+        resizeObserver.observe(container);
+
         // GUI Folders
-        const positionFolder = gui.addFolder("Position");
-        const MCFolder = gui.addFolder("Material and Color");
-        const lightFolder = gui.addFolder("Lighting");
 
-        // Position Controls
-        positionFolder
-            .add(cube.position, "x")
-            .min(-3).max(3).step(0.1).name("X");
-
-        positionFolder
-            .add(cube.position, "y")
-            .min(-3).max(3).step(0.1).name("Y");
-
-        positionFolder
-            .add(cube.position, "z")
-            .min(-3).max(3).step(0.1).name("Z");
-
-        positionFolder.add(cube, "visible").name("Visibility");
-
-        // Material Controls
-        MCFolder.add(material, "wireframe").name("Wireframe");
-
-        MCFolder.add(Material, "roughness", 0, 1, 0.01)
-            .name("Roughness")
-            .onChange((value: number) => {
-                material.roughness = value;
-            });
-
-        MCFolder.add(Material, "metalness", 0, 1, 0.01)
-            .name("Metalness")
-            .onChange((value: number) => {
-                material.metalness = value;
-            });
-
-        MCFolder.addColor(Data, "color")
-            .name("Background Color")
-            .onChange((value: string) => {
-                scene.background = new THREE.Color(value);
-            });
-
-        MCFolder.addColor(Material, "color")
-            .name("Material Color")
-            .onChange((value: string) => {
-                material.color.set(value);
-            });
-
-        // Lighting Controls
-        lightFolder
-            .add(ambientLight, "intensity")
-            .min(0).max(5).step(0.1)
-            .name("Ambient Light");
-
-        lightFolder
-            .add(directionalLight, "intensity")
-            .min(0).max(10).step(0.1)
-            .name("Directional Light");
 
         // Animation
         let animationId: number;
@@ -179,7 +259,6 @@ const Page = () => {
             animationId = requestAnimationFrame(animate);
 
             controls.update();
-
             renderer.render(scene, camera);
         }
 
@@ -190,11 +269,8 @@ const Page = () => {
             cancelAnimationFrame(animationId);
 
             controls.dispose();
+            resizeObserver.disconnect();
             gui.destroy();
-
-            geometry.dispose();
-            material.dispose();
-            texture.dispose();
 
             renderer.dispose();
         };
@@ -202,7 +278,7 @@ const Page = () => {
     }, []);
 
     return (
-        <div className="w-full h-screen">
+        <div className="h-full w-full">
             <canvas
                 ref={Box}
                 className="w-full h-full block"
