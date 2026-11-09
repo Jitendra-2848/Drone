@@ -1,23 +1,38 @@
-import ModelGallery from "./shape/ModelGallery";
+'use client';
+import { Canvas } from '@react-three/fiber';
+import Box from './components/Box';
+import { OrbitControls, useHelper } from '@react-three/drei';
+import React, { useRef, useState } from 'react';
+import { PointLight, PointLightHelper } from 'three';
 
-export default function Page() {
-  return (
-    <main className="min-h-svh bg-[#c8c98b] px-4 py-8 text-slate-100 sm:px-6 sm:py-12">
-      <div className="mx-auto max-w-7xl">
-        <header className="mb-8 sm:mb-10">
-          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#040808]">
-            3D Model Viewer
-          </p>
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            Explore the collection
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 sm:text-base">
-            Rotate each model, zoom in, and adjust its appearance using the
-            settings panel.
-          </p>
-        </header>
-        <ModelGallery />
-      </div>
-    </main>
-  );
+
+
+
+function MyLight() {
+    const lightRef = useRef<PointLight>(null);
+    useHelper(lightRef, PointLightHelper, 0.5, 'yellow');
+
+    return <pointLight ref={lightRef} intensity={1} decay={0} position={[3, 1, 4]} />;
 }
+function Color(){
+    return `rgb(${genColor()},${genColor()},${genColor()})`
+}
+console.log(Color())
+function genColor(){
+    return (Math.random() * 255);
+}
+function App() {
+    return (
+        <div style={{ width: '100vw', height: '100vh' }}>
+            <Canvas>
+                {/* <pointLight intensity={10} position={[3,1,5]} /> */}
+                <MyLight />
+                <OrbitControls />
+                <Box />
+            </Canvas>
+            hello world
+        </div>
+    );
+}
+
+export default App;   
