@@ -1,21 +1,32 @@
 
 'use client'
 
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
+import GoalPage from './y/goal-page'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const Page = () => {
-    const imageSection = useRef(null)
-    const wildlifeText = useRef(null)
-
+    const pageRef = useRef<HTMLDivElement | null>(null)
+    const imageSection = useRef<HTMLElement | null>(null)
+    const wildlifeText = useRef<HTMLParagraphElement | null>(null)
+    const pinRef = useRef<HTMLElement | null>(null)
     const paragraph =
         "Wildlife is the heartbeat of our planet. From the deepest oceans to the tallest forests, every living creature plays a vital role in maintaining the delicate balance of nature. Protecting wildlife means protecting our future."
 
     useEffect(() => {
+        const page = pageRef.current
+        const imageSectionElement = imageSection.current
+        const wildlifeTextElement = wildlifeText.current
+        const pinElement = pinRef.current
+
+        if (!page || !imageSectionElement || !wildlifeTextElement || !pinElement) {
+            throw new Error('Page animation elements are missing')
+        }
+
         const lenis = new Lenis({
             autoRaf: true,
         })
@@ -23,13 +34,12 @@ const Page = () => {
         lenis.on('scroll', ScrollTrigger.update)
 
         const ctx = gsap.context(() => {
-
             // Image Blur To Clear Animation
             gsap.fromTo(
                 '.reveal-img',
                 {
                     filter: 'blur(15px)',
-                    opacity: 0.2,
+                    opacity: 0.1,
                     scale: 1.1,
                     y: 60,
                 },
@@ -39,9 +49,10 @@ const Page = () => {
                     scale: 1,
                     y: 0,
                     stagger: 0.2,
+                    duration: 1,
                     ease: 'none',
                     scrollTrigger: {
-                        trigger: imageSection.current,
+                        trigger: imageSectionElement,
                         start: 'top 85%',
                         end: 'top 20%',
                         scrub: 1,
@@ -60,7 +71,7 @@ const Page = () => {
                     stagger: 0.08,
                     ease: 'none',
                     scrollTrigger: {
-                        trigger: wildlifeText.current,
+                        trigger: wildlifeTextElement,
                         start: 'top 85%',
                         end: 'bottom 45%',
                         scrub: 1,
@@ -68,7 +79,16 @@ const Page = () => {
                 }
             )
 
-        })
+            ScrollTrigger.create({
+                trigger: pinElement,
+                start: 'top top',
+                end: () => `+=${window.innerHeight}`,
+                pin: true,
+                pinSpacing: false,
+                anticipatePin: 1,
+                invalidateOnRefresh: true,
+            })
+        }, page)
 
         ScrollTrigger.refresh()
 
@@ -80,7 +100,7 @@ const Page = () => {
     }, [])
 
     return (
-        <div className="w-full overflow-hidden bg-white">
+        <div ref={pageRef} className="w-full overflow-x-clip bg-white">
 
             {/* First Section */}
             <section className="h-screen flex items-center justify-center">
@@ -99,7 +119,7 @@ const Page = () => {
                 <div className="w-full flex gap-3">
 
                     <img
-                        src="/images/1.jpg"
+                        src="/images/1.png"
                         className="reveal-img w-1/2 h-[50vh] object-cover"
                         alt="Wildlife"
                     />
@@ -145,7 +165,10 @@ const Page = () => {
 
 
             {/* Final Section */}
-            <section className="h-screen flex items-center justify-center bg-black text-white">
+            <section
+                ref={pinRef}
+                className="protect-bar relative z-0 h-screen flex items-center justify-center bg-black text-white"
+            >
 
                 <h1 className="text-5xl md:text-7xl font-bold">
                     Protect Nature.
@@ -153,6 +176,8 @@ const Page = () => {
 
             </section>
 
+            <GoalPage />
+                    
         </div>
     )
 }
