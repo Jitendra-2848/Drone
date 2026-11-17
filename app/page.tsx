@@ -6,6 +6,8 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import GoalPage from './y/goal-page'
+import Animal from './components/Animal'
+import Footer from './components/Footer'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -177,7 +179,13 @@ const Page = () => {
             </section>
 
             <GoalPage />
-                    
+                <div>
+                    <Animal />
+                </div>
+                <div>
+                    Peace we need 
+                    <Footer />
+                </div>
         </div>
     )
 }
