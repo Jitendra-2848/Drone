@@ -8,6 +8,8 @@ import Lenis from 'lenis'
 import GoalPage from './y/goal-page'
 import Animal from './components/Animal'
 import Footer from './components/Footer'
+import Hero from './components/Hero'
+import Header from './components/Header'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -66,16 +68,16 @@ const Page = () => {
             gsap.fromTo(
                 '.word',
                 {
-                    opacity: 0.15,
+                    opacity: 0.03,
                 },
                 {
                     opacity: 1,
-                    stagger: 0.08,
-                    ease: 'none',
+                    stagger: 0.2,
+                    ease: 'bounce',
                     scrollTrigger: {
                         trigger: wildlifeTextElement,
-                        start: 'top 85%',
-                        end: 'bottom 45%',
+                        start: 'top 80%',
+                        end: 'bottom 55%',
                         scrub: 1,
                     }
                 }
@@ -103,18 +105,14 @@ const Page = () => {
 
     return (
         <div ref={pageRef} className="w-full overflow-x-clip bg-white">
-
-            {/* First Section */}
-            <section className="h-screen flex items-center justify-center">
-                <h1 className="text-5xl md:text-7xl font-bold">
-                    Scroll Down
-                </h1>
-            </section>
+              <Header /> 
+            <Hero />
 
 
             {/* Image Section */}
             <section
                 ref={imageSection}
+                id="explore"
                 className="w-full min-h-screen flex flex-col items-center justify-center gap-3 px-2"
             >
 
@@ -146,11 +144,11 @@ const Page = () => {
 
 
             {/* Wildlife Text Section */}
-            <section className="min-h-screen w-full flex items-center justify-center px-6 md:px-24 py-32">
+            <section id="mission" className="min-h-screen w-full flex items-center justify-center px-6 md:px-24 py-32">
 
                 <p
                     ref={wildlifeText}
-                    className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.2] text-center"
+                    className="text-xl md:text-2xl lg:text-3xl font-bold leading-[1.2] text-center"
                 >
                     {paragraph.split(' ').map((word, index) => (
                         <span
@@ -169,6 +167,7 @@ const Page = () => {
             {/* Final Section */}
             <section
                 ref={pinRef}
+                id="future"
                 className="protect-bar relative z-0 h-screen flex items-center justify-center bg-black text-white"
             >
 
@@ -179,11 +178,10 @@ const Page = () => {
             </section>
 
             <GoalPage />
-                <div>
+                <div id="wildlife">
                     <Animal />
                 </div>
                 <div>
-                    Peace we need 
                     <Footer />
                 </div>
         </div>

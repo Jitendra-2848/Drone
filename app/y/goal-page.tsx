@@ -14,6 +14,10 @@ const galleryImages = [
     { src: '/images/5.png', alt: 'Protected natural habitat' },
 ]
 
+// Single source of truth for the hidden state, so the SSR inline styles and
+// the animation's "from" values can never drift apart.
+const HIDDEN = { filter: 'blur(10px)', opacity: 0.7, scale: 0.97 }
+
 export default function GoalPage() {
     const sectionRef = useRef<HTMLElement | null>(null)
     const viewportRef = useRef<HTMLDivElement | null>(null)
@@ -24,15 +28,15 @@ export default function GoalPage() {
         const viewport = viewportRef.current
         const track = trackRef.current
 
-        if (!section || !viewport || !track) {
-            throw new Error('Goal gallery elements are missing')
-        }
+        if (!section || !viewport || !track) return
 
         const images = Array.from(track.querySelectorAll<HTMLImageElement>('.goal-image'))
         const getDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth)
 
         const ctx = gsap.context(() => {
-            const timeline = gsap.timeline({
+            const scrollTween = gsap.to(track, {
+                x: () => -getDistance(),
+                ease: 'none',
                 scrollTrigger: {
                     trigger: section,
                     start: 'top top',
@@ -44,36 +48,26 @@ export default function GoalPage() {
                 },
             })
 
-            timeline.to(
-                track,
-                {
-                    x: () => -getDistance(),
-                    duration: 1,
-                    ease: 'none',
-                },
-                0,
-            )
-
-            images.forEach((image, index) => {
-                const revealAt = images.length > 1
-                    ? 0.04 + (index / (images.length - 1)) * 0.1
-                    : 0.01
-
-                timeline.to(
+            images.forEach((image) => {
+                gsap.fromTo(
                     image,
+                    { filter: HIDDEN.filter, opacity: HIDDEN.opacity, scale: HIDDEN.scale },
                     {
                         filter: 'blur(0px)',
                         opacity: 1,
                         scale: 1,
-                        duration: 0.2,
                         ease: 'none',
+                        scrollTrigger: {
+                            trigger: image,
+                            containerAnimation: scrollTween,
+                            start: 'left 85%',
+                            end: 'left 55%',
+                            scrub: true,
+                        },
                     },
-                    revealAt,
                 )
             })
         }, section)
-
-        ScrollTrigger.refresh()
 
         return () => {
             ctx.revert()
@@ -98,16 +92,16 @@ export default function GoalPage() {
                         {galleryImages.map((image) => (
                             <figure
                                 key={image.src}
-                                className="w-[82vw] max-w-[42rem] flex-none md:w-[60vw] lg:w-[48vw]"
+                                className="w-[82vw] max-w-2xl flex-none md:w-[60vw] lg:w-[48vw]"
                             >
                                 <img
                                     src={image.src}
                                     alt={image.alt}
-                                    className="goal-image aspect-[4/3] w-full rounded-sm object-cover"
+                                    className="goal-image aspect-4/3 w-full rounded-sm object-cover"
                                     style={{
-                                        filter: 'blur(10px)',
-                                        opacity: 0.7,
-                                        transform: 'scale(0.97)',
+                                        filter: HIDDEN.filter,
+                                        opacity: HIDDEN.opacity,
+                                        transform: `scale(${HIDDEN.scale})`,
                                     }}
                                 />
                             </figure>
