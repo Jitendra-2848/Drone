@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -8,9 +9,9 @@ gsap.registerPlugin(ScrollTrigger)
 
 const galleryImages = [
     { src: '/images/1.png', alt: 'Wildlife in its natural habitat' },
-    { src: '/images/2.png', alt: 'Forest landscape' },
-    { src: '/images/3.png', alt: 'Nature and wildlife' },
-    { src: '/images/4.png', alt: 'Wildlife conservation' },
+    { src: '/images/2.png', alt: 'Forest landscape and river' },
+    { src: '/images/3.png', alt: 'Grizzly salmon run' },
+    { src: '/images/4.png', alt: 'Wildlife conservation sanctuary' },
     { src: '/images/5.png', alt: 'Protected natural habitat' },
 ]
 
@@ -80,38 +81,56 @@ export default function GoalPage() {
                 ref={sectionRef}
                 className="relative z-10 flex min-h-screen w-full flex-col justify-center overflow-hidden bg-white py-12 md:py-16"
             >
-                <h1 className="mb-8 px-6 text-center text-4xl font-bold md:mb-12 md:px-16 md:text-7xl">
-                    Our Goal to Protect
-                </h1>
+                <div className="mb-8 px-6 text-center md:mb-12 md:px-16">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-neutral-400">
+                        CONTINUOUS EXPEDITIONS
+                    </p>
+                    <h2 className="mt-2 text-3xl font-medium uppercase tracking-tight sm:text-5xl lg:text-7xl">
+                        Our Goal to Protect
+                    </h2>
+                </div>
 
                 <div ref={viewportRef} className="w-full overflow-hidden">
                     <div
                         ref={trackRef}
-                        className="flex w-max gap-4 px-6 md:gap-8 md:px-16"
+                        className="flex w-max gap-4 px-4 sm:px-6 md:gap-8 md:px-16"
                     >
                         {galleryImages.map((image) => (
                             <figure
                                 key={image.src}
-                                className="w-[82vw] max-w-2xl flex-none md:w-[60vw] lg:w-[48vw]"
+                                className="w-[84vw] max-w-2xl flex-none sm:w-[65vw] md:w-[60vw] lg:w-[48vw]"
                             >
-                                <img
-                                    src={image.src}
-                                    alt={image.alt}
-                                    className="goal-image aspect-4/3 w-full rounded-sm object-cover"
-                                    style={{
-                                        filter: HIDDEN.filter,
-                                        opacity: HIDDEN.opacity,
-                                        transform: `scale(${HIDDEN.scale})`,
-                                    }}
-                                />
+                                <div className="relative aspect-4/3 w-full overflow-hidden rounded-sm bg-neutral-100">
+                                    <Image
+                                        src={image.src}
+                                        alt={image.alt}
+                                        width={900}
+                                        height={675}
+                                        loading="lazy"
+                                        decoding="async"
+                                        className="goal-image aspect-4/3 w-full object-cover"
+                                        style={{
+                                            filter: HIDDEN.filter,
+                                            opacity: HIDDEN.opacity,
+                                            transform: `scale(${HIDDEN.scale})`,
+                                        }}
+                                    />
+                                </div>
                             </figure>
                         ))}
                     </div>
                 </div>
             </section>
 
-            <section className="flex min-h-screen w-full items-center justify-center bg-white px-6 py-24">
-                <h2 className="text-5xl font-bold md:text-7xl">Our Future</h2>
+            <section className="flex min-h-[70vh] sm:min-h-screen w-full items-center justify-center bg-black text-white px-6 py-20 text-center">
+                <div className="max-w-4xl">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-neutral-400">
+                        ENDURING HORIZON
+                    </p>
+                    <h2 className="mt-4 text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-medium uppercase tracking-tight">
+                        Our Future In The Wild.
+                    </h2>
+                </div>
             </section>
         </>
     )
