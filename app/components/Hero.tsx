@@ -1,13 +1,64 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import Link from "next/link";
+import gsap from "gsap";
+
 const expertise = [
-  "Wildlife protection",
-  "Habitat restoration",
-  "Field research",
-  "Community action",
+  "Land Protection",
+  "Wildlife Tracking",
+  "Habitat Restoration",
+  "Local Partnerships",
 ];
 
 export default function Hero() {
+  const containerRef = useRef<HTMLElement | null>(null);
+  const headlineLine1Ref = useRef<HTMLSpanElement | null>(null);
+  const headlineLine2Ref = useRef<HTMLSpanElement | null>(null);
+  const paragraphRef = useRef<HTMLParagraphElement | null>(null);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+      // 1. Headline lines glide up with lens de-blur
+      tl.fromTo(
+        headlineLine1Ref.current,
+        { y: 55, opacity: 0, filter: "blur(12px)" },
+        { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.25 }
+      )
+        .fromTo(
+          headlineLine2Ref.current,
+          { y: 50, opacity: 0, filter: "blur(10px)" },
+          { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.2 },
+          "-=0.9"
+        )
+        // 2. Lead paragraph reveal
+        .fromTo(
+          paragraphRef.current,
+          { y: 30, opacity: 0, filter: "blur(8px)" },
+          { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.0 },
+          "-=0.7"
+        )
+        // 3. Sidebar items reveal
+        .fromTo(
+          sidebarRef.current,
+          { y: 25, opacity: 0, filter: "blur(6px)" },
+          { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.9 },
+          "-=0.6"
+        );
+    }, container);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
+      ref={containerRef}
       id="home"
       className="relative isolate min-h-[calc(100svh-4rem)] overflow-hidden bg-white text-black"
       style={{
@@ -17,23 +68,38 @@ export default function Hero() {
       }}
     >
       <div className="relative z-10 mx-auto flex min-h-[calc(100svh-4rem)] max-w-[1800px] flex-col justify-between px-5 pb-8 pt-14 sm:px-8 sm:pt-16 lg:px-10 lg:pt-20">
-        <div>
+        <div className="overflow-hidden">
           <h1 className="max-w-full text-[clamp(2.6rem,9.3vw,9.5rem)] font-medium uppercase leading-[0.86] tracking-[-0.085em]">
-            <span className="block text-black">Wildlife needs</span>
-            <span className="block text-neutral-400">room to live.</span>
+            <span
+              ref={headlineLine1Ref}
+              className="block text-black will-change-[transform,opacity,filter]"
+            >
+              Wildlife needs
+            </span>
+            <span
+              ref={headlineLine2Ref}
+              className="block text-neutral-400 will-change-[transform,opacity,filter]"
+            >
+              room to live.
+            </span>
           </h1>
         </div>
 
-        <div className="relative z-10 grid items-end gap-8 pb-5 pt-20 lg:grid-cols-[1.4fr_0.6fr] lg:gap-16">
-          <p className="max-w-[900px] text-[clamp(1.45rem,3.8vw,3.5rem)] leading-[1.13] tracking-[-0.065em] text-neutral-500">
+        <div className="relative z-10 grid items-end gap-8 pb-5 pt-16 lg:grid-cols-[1.4fr_0.6fr] lg:gap-16">
+          <p
+            ref={paragraphRef}
+            className="max-w-[900px] text-[clamp(1.4rem,3.4vw,3.2rem)] leading-[1.14] tracking-[-0.055em] text-neutral-500 will-change-[transform,opacity,filter]"
+          >
             A living planet depends on{" "}
-            <span className="text-black">wild places</span> and the
-            communities who care for them. Together, we can make space for both.
+            <span className="text-black font-medium">connected land</span>. When wild places shrink and break apart, everything that lives in them disappears. We protect what remains.
           </p>
 
-          <div className="relative z-10 lg:justify-self-end lg:min-w-[280px]">
-            <p className="mb-3 border-b border-black/15 pb-2 text-[9px] font-bold uppercase tracking-[0.18em] text-neutral-400">
-              Our core work
+          <div
+            ref={sidebarRef}
+            className="relative z-10 lg:justify-self-end lg:min-w-[280px] will-change-[transform,opacity,filter]"
+          >
+            <p className="mb-3 border-b border-black/15 pb-2 text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-400">
+              Core Mandate
             </p>
             <ul className="grid grid-cols-2 gap-x-6">
               {expertise.map((item) => (
@@ -45,12 +111,15 @@ export default function Hero() {
                 </li>
               ))}
             </ul>
-            <a
+            <Link
               href="/habitats"
-              className="mt-5 inline-flex min-h-10 items-center gap-3 rounded-full bg-black px-5 text-[9px] font-semibold uppercase tracking-[0.14em] text-white transition-colors hover:bg-neutral-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
+              className="group mt-5 inline-flex min-h-10 items-center gap-3 rounded-full bg-black px-5 text-[9px] font-semibold uppercase tracking-[0.14em] text-white transition-all hover:bg-neutral-800 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
             >
-              Explore our sanctuaries <span aria-hidden="true">↗</span>
-            </a>
+              <span>Explore our sanctuaries</span>
+              <span className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">
+                ↗
+              </span>
+            </Link>
           </div>
         </div>
       </div>

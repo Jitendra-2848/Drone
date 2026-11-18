@@ -18,26 +18,26 @@ const portals = [
     {
         num: "01",
         label: "OUR MISSION",
-        title: "The Manifesto of Space",
-        desc: "Securing contiguous land easements, preventing fragmentation, and guaranteeing biological autonomy for keystone species.",
+        title: "Why We Exist",
+        desc: "Animals need connected land to survive. We buy, protect, and defend the corridors that let wildlife move freely between wild areas.",
         href: "/mission",
-        cta: "Read Manifesto",
+        cta: "Read Our Mission",
     },
     {
         num: "02",
         label: "HABITATS",
-        title: "The Living Biomes",
-        desc: "Protecting riparian salmon basins, ancient multi-tier canopies, and subalpine granite migration corridors.",
+        title: "Where They Live",
+        desc: "From glacier-fed rivers to ancient mountain ridges — the places we guard and the reasons each one matters.",
         href: "/habitats",
-        cta: "Explore Biomes",
+        cta: "Explore Habitats",
     },
     {
         num: "03",
         label: "WILDLIFE",
-        title: "The Sentinels & Census",
-        desc: "Tracking keystone fauna, studying trophic equilibrium, and maintaining generational continuity without human interference.",
+        title: "Who We Protect",
+        desc: "Elk, deer, grizzlies — and the smaller creatures nobody notices. We track them, study them, and stay out of their way.",
         href: "/wildlife",
-        cta: "Meet Species",
+        cta: "Meet the Animals",
     },
 ];
 
@@ -47,7 +47,7 @@ const Page = () => {
     const wildlifeText = useRef<HTMLParagraphElement | null>(null)
     const pinRef = useRef<HTMLElement | null>(null)
     const paragraph =
-        "Wildlife is the heartbeat of our planet. From the deepest oceans to the tallest forests, every living creature plays a vital role in maintaining the delicate balance of nature. Protecting wildlife means protecting our future."
+        "When we lose wild land, we lose everything that depends on it — clean rivers, clean air, and creatures that have lived here far longer than we have. This is about keeping what remains."
 
     useEffect(() => {
         const page = pageRef.current
@@ -81,8 +81,8 @@ const Page = () => {
                     scale: 1,
                     y: 0,
                     stagger: 0.2,
-                    duration: 1,
-                    ease: 'none',
+                    duration: 1.2,
+                    ease: 'power2.out',
                     scrollTrigger: {
                         trigger: imageSectionElement,
                         start: 'top 85%',
@@ -213,7 +213,7 @@ const Page = () => {
             >
                 <div className="max-w-3xl">
                     <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-neutral-400">
-                        IMMUTABLE MANDATE
+                        A SIMPLE TRUTH
                     </p>
                     <h1 className="mt-4 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-medium uppercase tracking-[-0.05em]">
                         Protect Nature.
@@ -228,21 +228,18 @@ const Page = () => {
                 <Animal />
             </div>
 
-            {/* Combined Pillars Gateway */}
+            {/* Combined Pillars Gateway with Subtle Magnetic Border Lift */}
             <section className="border-t border-black/10 bg-neutral-50 px-4 py-20 sm:px-8 sm:py-28 lg:px-16">
                 <div className="mx-auto max-w-[1400px]">
                     <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end border-b border-black/10 pb-8">
                         <div>
                             <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-neutral-400">
-                                ARCHITECTURE OF WILDTERRA
+                                WHAT WE DO
                             </p>
                             <h2 className="mt-2 text-3xl font-medium uppercase tracking-tight sm:text-5xl lg:text-6xl">
-                                Enter The Sanctuaries
+                                Go Deeper
                             </h2>
                         </div>
-                        <p className="text-xs uppercase tracking-widest text-neutral-500">
-                            THREE PILLARS • ZERO DISTURBANCE
-                        </p>
                     </div>
 
                     <div className="mt-12 grid gap-6 sm:gap-8 md:grid-cols-3">
@@ -250,7 +247,7 @@ const Page = () => {
                             <Link
                                 key={portal.num}
                                 href={portal.href}
-                                className="group flex flex-col justify-between border border-black/10 bg-white p-6 sm:p-8 transition-all duration-300 hover:border-black hover:shadow-lg"
+                                className="group flex flex-col justify-between border border-black/10 bg-white p-6 sm:p-8 transition-all duration-300 hover:border-black hover:-translate-y-1 hover:shadow-xl active:scale-[0.99]"
                             >
                                 <div>
                                     <div className="flex items-center justify-between">
@@ -270,7 +267,7 @@ const Page = () => {
                                 </div>
                                 <div className="mt-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-black">
                                     <span>{portal.cta}</span>
-                                    <span className="transition-transform group-hover:translate-x-1" aria-hidden="true">
+                                    <span className="transition-transform duration-200 group-hover:translate-x-1.5" aria-hidden="true">
                                         ↗
                                     </span>
                                 </div>

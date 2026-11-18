@@ -17,9 +17,9 @@ export default function Header() {
       <div className="mx-auto flex h-16 max-w-[1800px] items-center justify-between px-6 sm:px-10 lg:px-16">
         <Link
           href="/"
-          className="group flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] transition-opacity hover:opacity-70"
+          className="group flex items-center gap-2.5 text-xl font-bold uppercase tracking-[0.22em] transition-opacity hover:opacity-70"
         >
-          <span className="inline-block h-2 w-2 rounded-full bg-black group-hover:scale-125 transition-transform" />
+          {/* <span className="inline-block h-2 w-2 rounded-full  bg-black group-hover:scale-125 transition-transform" /> */}
           WildTerra
         </Link>
 
@@ -42,14 +42,6 @@ export default function Header() {
           })}
         </nav>
 
-        <div className="hidden sm:flex items-center">
-          <Link
-            href="/mission"
-            className="inline-flex items-center gap-2 rounded-full border border-black px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-black transition-all hover:bg-black hover:text-white"
-          >
-            Manifesto <span aria-hidden="true">↗</span>
-          </Link>
-        </div>
       </div>
     </header>
   );
