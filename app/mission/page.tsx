@@ -9,6 +9,14 @@ export const metadata: Metadata = {
   title: "Our Mission — Defending Unbroken Habitats",
   description:
     "WildTerra protects connected land corridors and defends untouched wilderness so wildlife can move, hunt, and endure without human interference.",
+  keywords: [
+    "conservation mission",
+    "wildlife corridors",
+    "unfragmented land",
+    "land easements",
+    "acoustic monitoring",
+    "indigenous stewardship",
+  ],
   alternates: {
     canonical: "/mission",
   },

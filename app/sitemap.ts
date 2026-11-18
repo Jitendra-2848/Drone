@@ -1,7 +1,11 @@
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://wildterra.org";
+  const rawBase =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://wildterra.vercel.app");
+  const baseUrl = rawBase.startsWith("http") ? rawBase : `https://${rawBase}`;
+
   const currentDate = new Date().toISOString();
 
   return [

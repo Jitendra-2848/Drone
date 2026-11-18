@@ -10,6 +10,14 @@ export const metadata: Metadata = {
   title: "Habitats & Biomes — Protected Wilderness",
   description:
     "Explore the glacial river basins, old-growth canopies, and subalpine granite passes guarded under the WildTerra conservation framework.",
+  keywords: [
+    "protected biomes",
+    "salmon river basin",
+    "old growth forest",
+    "temperate rainforest",
+    "subalpine cataracts",
+    "watershed conservation",
+  ],
   alternates: {
     canonical: "/habitats",
   },

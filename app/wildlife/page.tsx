@@ -9,6 +9,15 @@ export const metadata: Metadata = {
   title: "Wildlife & Keystone Species",
   description:
     "Discover the keystone fauna—from Rocky Mountain elk to interior grizzly bears—tracked, monitored, and protected across WildTerra sanctuaries.",
+  keywords: [
+    "keystone wildlife",
+    "grizzly bear conservation",
+    "Rocky Mountain elk",
+    "black-tailed deer",
+    "GPS telemetry",
+    "fauna census",
+    "predator protection",
+  ],
   alternates: {
     canonical: "/wildlife",
   },
