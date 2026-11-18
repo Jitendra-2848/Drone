@@ -72,13 +72,15 @@ export default function Hero() {
           <h1 className="max-w-full text-[clamp(2.6rem,9.3vw,9.5rem)] font-medium uppercase leading-[0.86] tracking-[-0.085em]">
             <span
               ref={headlineLine1Ref}
-              className="block text-black will-change-[transform,opacity,filter]"
+              className="hero-anim-line1 block text-black will-change-[transform,opacity,filter]"
+              style={{ opacity: 0, transform: "translateY(55px)", filter: "blur(12px)" }}
             >
               Wildlife needs
             </span>
             <span
               ref={headlineLine2Ref}
-              className="block text-neutral-400 will-change-[transform,opacity,filter]"
+              className="hero-anim-line2 block text-neutral-400 will-change-[transform,opacity,filter]"
+              style={{ opacity: 0, transform: "translateY(50px)", filter: "blur(10px)" }}
             >
               room to live.
             </span>
@@ -88,7 +90,8 @@ export default function Hero() {
         <div className="relative z-10 grid items-end gap-8 pb-5 pt-16 lg:grid-cols-[1.4fr_0.6fr] lg:gap-16">
           <p
             ref={paragraphRef}
-            className="max-w-[900px] text-[clamp(1.4rem,3.4vw,3.2rem)] leading-[1.14] tracking-[-0.055em] text-neutral-500 will-change-[transform,opacity,filter]"
+            className="hero-anim-p max-w-[900px] text-[clamp(1.4rem,3.4vw,3.2rem)] leading-[1.14] tracking-[-0.055em] text-neutral-500 will-change-[transform,opacity,filter]"
+            style={{ opacity: 0, transform: "translateY(30px)", filter: "blur(8px)" }}
           >
             A living planet depends on{" "}
             <span className="text-black font-medium">connected land</span>. When wild places shrink and break apart, everything that lives in them disappears. We protect what remains.
@@ -96,7 +99,8 @@ export default function Hero() {
 
           <div
             ref={sidebarRef}
-            className="relative z-10 lg:justify-self-end lg:min-w-[280px] will-change-[transform,opacity,filter]"
+            className="hero-anim-sidebar relative z-10 lg:justify-self-end lg:min-w-[280px] will-change-[transform,opacity,filter]"
+            style={{ opacity: 0, transform: "translateY(25px)", filter: "blur(6px)" }}
           >
             <p className="mb-3 border-b border-black/15 pb-2 text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-400">
               Core Mandate

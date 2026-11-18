@@ -158,6 +158,7 @@ const Page = () => {
                             loading="lazy"
                             decoding="async"
                             className="reveal-img object-cover will-change-[filter,transform,opacity]"
+                            style={{ filter: "blur(18px)", opacity: 0.1, transform: "translateY(40px) scale(1.06)" }}
                         />
                     </div>
 
@@ -170,6 +171,7 @@ const Page = () => {
                             loading="lazy"
                             decoding="async"
                             className="reveal-img object-cover will-change-[filter,transform,opacity]"
+                            style={{ filter: "blur(18px)", opacity: 0.1, transform: "translateY(40px) scale(1.06)" }}
                         />
                     </div>
                 </div>
@@ -183,6 +185,7 @@ const Page = () => {
                         loading="lazy"
                         decoding="async"
                         className="reveal-img object-cover will-change-[filter,transform,opacity]"
+                        style={{ filter: "blur(18px)", opacity: 0.1, transform: "translateY(40px) scale(1.06)" }}
                     />
                 </div>
             </section>

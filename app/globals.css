@@ -26,6 +26,74 @@ body {
     min-height: 100vh;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   GSAP Anti-FOUC (Flash of Unanimated Content) Initial States
+   Prevents content from flashing visible before GSAP hydrates
+   ───────────────────────────────────────────────────────────── */
+
+.hero-anim-line1 {
+    opacity: 0;
+    transform: translateY(55px);
+    filter: blur(12px);
+    will-change: transform, opacity, filter;
+}
+
+.hero-anim-line2 {
+    opacity: 0;
+    transform: translateY(50px);
+    filter: blur(10px);
+    will-change: transform, opacity, filter;
+}
+
+.hero-anim-p {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(8px);
+    will-change: transform, opacity, filter;
+}
+
+.hero-anim-sidebar {
+    opacity: 0;
+    transform: translateY(25px);
+    filter: blur(6px);
+    will-change: transform, opacity, filter;
+}
+
+.reveal-item {
+    opacity: 0;
+    transform: translateY(28px);
+    filter: blur(8px);
+    will-change: transform, opacity, filter;
+}
+
+.reveal-child {
+    opacity: 0;
+    transform: translateY(32px);
+    filter: blur(10px);
+    will-change: transform, opacity, filter;
+}
+
+.reveal-scale {
+    opacity: 0.2;
+    transform: scale(1.06);
+    filter: blur(14px);
+    will-change: transform, opacity, filter;
+}
+
+.reveal-img {
+    opacity: 0.1;
+    transform: translateY(40px) scale(1.06);
+    filter: blur(18px);
+    will-change: transform, opacity, filter;
+}
+
+.kinetic-word {
+    opacity: 0;
+    filter: blur(14px);
+    transform: translateY(20px);
+    will-change: transform, opacity, filter;
+}
+
 .animation-demo {
     display: flex;
     min-height: 100vh;

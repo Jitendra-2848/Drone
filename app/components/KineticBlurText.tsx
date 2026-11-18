@@ -106,7 +106,11 @@ export default function KineticBlurText({
             className={`kinetic-word inline-block mr-[0.28em] will-change-[filter,transform,opacity] ${
               isHighlight ? highlightClass : ""
             }`}
-            style={{ filter: `blur(${blurAmount}px)`, opacity: 0.08 }}
+            style={{
+              filter: `blur(${blurAmount}px)`,
+              opacity: mode === "scrub" ? 0.08 : 0,
+              transform: mode === "scrub" ? "translateY(16px)" : "translateY(24px)",
+            }}
           >
             {word}
           </span>
